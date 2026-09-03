@@ -113,8 +113,8 @@
 
 /* Narrow panes (ChatGPT's side-by-side browser, phones): keep the gallery short so title, price, variants and the
    merchant panel land in the first screens instead of behind a full-height image. */
-@media (max-width: 1180px) { .gallery-main { aspect-ratio: auto; height: 340px; } .gallery-main img { object-fit: contain; width: 100%; height: 100%; } }
+@media (max-width: 1180px) { .gallery-main { aspect-ratio: auto; height: 340px; display: block; } .gallery-main img { object-fit: contain; width: 100%; height: 100%; } }
 @media (max-width: 760px) { .gallery-main { height: 260px; } .gallery-thumb { width: 48px; height: 48px; } }
 /* Jump link to the merchant panel, shown only when the rail stacks below the product. */
-.pdp-panel-jump { display: none; }
-@media (max-width: 1180px) { .pdp-panel-jump { display: inline-flex; } }
+.pdp-topright .pdp-panel-jump { display: none; }
+@media (max-width: 1180px) { .pdp-topright .pdp-panel-jump { display: inline-flex; } }
