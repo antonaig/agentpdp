@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { TOOL_NAMES } from "../shared/types";
 
 // Smoke: the generated page registers the 8 tools on document.modelContext (native Chrome API, no simulation).
-const PDP = process.env.E2E_PDP_URL ?? "https://www.brooklinen.com/products/down-alternative-lumbar-pillow-insert";
+const PDP = process.env.E2E_PDP_URL ?? "https://www.brooklinen.com/products/luxe-core-sheet-set";
 
 test("generated page registers the 8 site tools", async ({ page }) => {
   const u = new URL(PDP);

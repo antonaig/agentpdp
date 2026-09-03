@@ -4,7 +4,7 @@ import { test, expect, type Page } from "@playwright/test";
 // i.e. the page's real execute handler (gate → handler → ledger). Selectors rely on data-testid attributes agreed with the UI:
 //   variant-option-<Option>-<Value> · add-to-cart · pin-variant · confirm-approve · confirm-decline · site-tools-badge
 //   policy-<tool>-<on|confirm|off> · ledger-row · counter-calls · counter-blocked · merchant-panel-toggle
-const PDP = process.env.E2E_PDP_URL ?? "https://www.brooklinen.com/products/down-alternative-lumbar-pillow-insert";
+const PDP = process.env.E2E_PDP_URL ?? "https://www.brooklinen.com/products/luxe-core-sheet-set";
 
 async function tools(page: Page): Promise<string[]> {
   return page.evaluate(async () => ((await (document as any).modelContext.getTools()) as any[]).map((t) => t.name).sort());
