@@ -6,7 +6,7 @@ import { z } from "zod";
 import type { AskResponse, Product } from "../../shared/types.js";
 
 export const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
-export const DEFAULT_MODEL = "llama-3.3-70b-versatile";
+export const DEFAULT_MODEL = "openai/gpt-oss-20b";
 export const ASK_TIMEOUT_MS = 10_000;
 export const NOT_SAID = "The product page doesn't say.";
 
