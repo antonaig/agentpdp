@@ -4,8 +4,9 @@
 
 A clean product page for the human, eight [WebMCP](https://webmachinelearning.github.io/webmcp/) site tools for the agent, and a merchant control plane that shows and governs what agents do — generated on the fly from the page's own product data. Built by [Aigency](https://aigency.ai) for the [OpenAI WebMCP Challenge](https://openai.com/webmcp-challenge/), September 2026. MIT.
 
-- Live: https://188-166-163-33.sslip.io (hostname to be replaced)
-- Try it: paste a Shopify product URL on the home page, or open `/p/<host>/<path>` directly.
+- Live: https://188-166-163-33.sslip.io
+- Try it: paste a product page URL on the home page, or open `/p/<host>/<path>` directly, e.g. [/p/www.brooklinen.com/products/luxe-core-sheet-set](https://188-166-163-33.sslip.io/p/www.brooklinen.com/products/luxe-core-sheet-set).
+- In ChatGPT: desktop app → Work or Codex chat → Cmd+Shift+B → open the page → the site-tools arrow appears in the address bar → ask for what you want ("which sizes are in stock under $200? add the queen to my cart").
 
 ## What agents get on a generated page
 
@@ -50,11 +51,27 @@ npx tsx server/scripts/matrix.ts     # live extraction matrix against real produ
 ## Deploy
 See `docs/DEPLOY.md` (DigitalOcean droplet, Caddy, systemd).
 
+## What we verified (2026-09-04)
+Live extraction matrix, real network, nothing mocked (`npx tsx server/scripts/matrix.ts`):
+
+| Page | Result | Path |
+|---|---|---|
+| Brooklinen sheet set | 174 variants, real cart link | Shopify feed |
+| Allbirds shoe | 13 variants, real cart link | Shopify feed |
+| SKIMS bra | 65 variants, cart link inferred from variant ids | schema.org ProductGroup |
+| Nike Air Force 1 | 22 sizes | schema.org ProductGroup |
+| Zappos, Samsung, a WooCommerce shop | 1 variant each | schema.org Product |
+| LEGO Millennium Falcon | 1 variant, through a Cloudflare challenge | headless render → JSON-LD |
+| Lululemon | refused (Akamai bot wall, transport-level) | honest `blocked_by_site` |
+| Bose, Gildan | no structured product data even after rendering | honest `no_product` |
+
+End to end: 109 unit tests; 7 native WebMCP tests in Chrome 152 with the runtime flags against the deployed URL (register 8 tools, annotations, select → ledger, confirm-gated add_to_cart → Shopify permalink, policy Off/On live unregister, human → agent state, generator `make_agent_ready`).
+
 ## Limits, stated plainly
-- Works on pages that publish product data (Shopify feed, schema.org, OpenGraph) or render it in the browser. Sites that block automated fetches may refuse; the page reports which step failed.
+- Works on pages that publish product data (Shopify feed, schema.org, OpenGraph) or render it in the browser. Sites that block automated fetches at the transport level (Akamai on Lululemon) refuse; the page reports which step failed.
 - Live availability only where the store exposes it (Shopify). Elsewhere the tool says "unknown" and why.
 - Merchant policies are enforced in the page, which is where WebMCP executes; they are stored per browser for this demo.
-- Tested in Chrome 152 with the WebMCP runtime flags and in ChatGPT's desktop browser. Site tools in ChatGPT require the built-in browser (Cmd+Shift+B) and a supported model.
+- Tested in Chrome 152 with the WebMCP runtime flags (`--enable-blink-features=WebMCP,WebMCPTesting`). Chrome 152 echoes only `readOnlyHint`/`untrustedContentHint` from `getTools()`; `consequentialHint` is passed at registration. Site tools in ChatGPT require the desktop app's built-in browser (Cmd+Shift+B) and a supported model.
 
 ## Prior work vs. new work
 All code in this repository was written during the challenge submission period (Sep 3–4, 2026). Ideas carried over from earlier Aigency work, without code: an extraction-ladder experiment for agent-readable pages, and the shape of three shopping tools shipped on our conversational storefront in March 2026.

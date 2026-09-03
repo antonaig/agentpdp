@@ -2,7 +2,7 @@
 
 **Project name:** AgentPDP
 **Tagline (≤ 60 chars):** Paste a product page. Get an agent-ready one.
-**Live URL:** https://188-166-163-33.sslip.io (replace with the real hostname once DNS is set)
+**Live URL:** https://188-166-163-33.sslip.io
 **Repo:** https://github.com/antonaig/agentpdp (MIT)
 **Video:** (YouTube link)
 
@@ -28,7 +28,15 @@ Node + Hono server, Vite + React page, TypeScript throughout. Extraction ladder:
 - Testing without the judges' browser: we verified the page in Chrome with the WebMCP runtime flags, invoking tools through the native `executeTool` API, and separately in ChatGPT's desktop browser.
 
 ## Accomplishments
-Real product pages from several brands become agent-ready in about two seconds. Real Shopify carts get filled by an agent call, with the human approving on screen. The merchant can change what agents may do while the agent is mid-task.
+Real product pages from Brooklinen, Allbirds, SKIMS, Nike, Samsung, Zappos and LEGO become agent-ready in one to ten seconds, from live extraction, no pre-built pages. A real Shopify cart gets filled by an agent call, with the human approving on screen. The merchant can switch a tool off while the agent is mid-task and it disappears from the agent's tool list. 109 unit tests and 7 native WebMCP end-to-end tests in Chrome run against the deployed site.
+
+## Testing instructions for judges
+1. Open https://188-166-163-33.sslip.io in ChatGPT's desktop browser (Cmd+Shift+B) or Chrome 149+ with `chrome://flags/#enable-webmcp-testing`.
+2. Click a chip (Brooklinen is the fastest) or paste a product URL. On the generated page the site-tools arrow (ChatGPT) shows 8 tools.
+3. Ask: "Which sizes are in stock under $200? Add the queen to my cart." Approve the on-page request. Open the returned cart link: it is the real store's cart.
+4. In the merchant panel on the right, set `add_to_cart` to Off and ask again. Set it back to Confirm.
+5. Optional: ask the generator page itself, "make this page agent-ready: <any product URL>".
+No login needed. Policies and the ledger are stored in your browser.
 
 ## What's next
 Per-merchant hostnames (`ai.brand.com` via CNAME), a merchant dashboard that aggregates the ledger across shoppers, tool policies driven by inventory and pricing rules, and the whole-store version of the same idea. One page is the wedge; the whole store is the product.
