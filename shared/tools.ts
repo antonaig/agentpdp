@@ -1,4 +1,4 @@
-import type { ToolName } from "./types";
+import type { ToolName } from "./types.js";
 
 /** Single source of truth for tool metadata. The page registers from this; docs and tests read from this. */
 export interface ToolDef {
