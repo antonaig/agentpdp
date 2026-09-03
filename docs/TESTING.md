@@ -5,7 +5,7 @@ The judges test in the ChatGPT desktop app's built-in browser (Cmd+Shift+B). Tha
 ## Verified facts (2026-09-04, Chrome 152.0.7977, Playwright channel "chrome")
 - Launch args: `--enable-blink-features=WebMCP,WebMCPTesting`. With them, `document.modelContext` exists with `registerTool`, `getTools`, `executeTool`, `ontoolchange`. `navigator.modelContext` is not present in 152.
 - `registerTool(tool, { signal })` and `signal.abort()` unregister the tool (verified with `getTools()`).
-- The API exists only on real origins (https, and localhost if verified); on `data:` URLs it is absent.
+- The API exists on real origins: https and http://localhost / 127.0.0.1 (verified, `window.originAgentCluster === true`); on `data:` URLs it is absent.
 - `--enable-features=WebMCP` alone does nothing. The chrome://flags entry is `enable-webmcp-testing`.
 - DevTools protocol domain `WebMCP` (`WebMCP.enable`, events `toolsAdded`, `toolsRemoved`, `toolInvoked`, `toolResponded`, method `invokeTool`) exists; `toolsAdded` fires with full tool descriptors when a page registers.
 

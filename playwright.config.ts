@@ -1,6 +1,6 @@
 import { defineConfig } from "@playwright/test";
 
-// Runs against a deployed or local origin. WebMCP needs a real origin (https, or localhost if verified).
+// Runs against a deployed or local origin. WebMCP needs a real origin (https or localhost; both verified).
 export default defineConfig({
   testDir: "./e2e",
   timeout: 90_000,
