@@ -110,3 +110,11 @@
 .cmp td.diff { background: color-mix(in srgb, var(--accent) 6%, white); }
 .cmp .title { font-weight: 600; color: var(--ink); display: block; }
 .cmp .host { color: var(--ink-3); font-size: 12px; font-weight: 400; }
+
+/* Narrow panes (ChatGPT's side-by-side browser, phones): keep the gallery short so title, price, variants and the
+   merchant panel land in the first screens instead of behind a full-height image. */
+@media (max-width: 1180px) { .gallery-main { aspect-ratio: auto; height: 340px; } .gallery-main img { object-fit: contain; width: 100%; height: 100%; } }
+@media (max-width: 760px) { .gallery-main { height: 260px; } .gallery-thumb { width: 48px; height: 48px; } }
+/* Jump link to the merchant panel, shown only when the rail stacks below the product. */
+.pdp-panel-jump { display: none; }
+@media (max-width: 1180px) { .pdp-panel-jump { display: inline-flex; } }

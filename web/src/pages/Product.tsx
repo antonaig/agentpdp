@@ -174,6 +174,7 @@ export function ProductPage() {
               ? <a className="pill cart-pill" href={cartLink} target="_blank" rel="noopener noreferrer" data-testid="cart-badge">Cart · {cartCount}</a>
               : <span className="pill" data-testid="cart-badge">Cart · {cartCount}</span>
           )}
+          <a className="pill pdp-panel-jump" href="#merchant-panel">Merchant view ↓</a>
           <SiteToolsBadge />
         </div>
       </header>
@@ -259,7 +260,7 @@ export function ProductPage() {
             </div>
           </section>
 
-          <div className="pdp-rail"><MerchantPanel /></div>
+          <div className="pdp-rail" id="merchant-panel"><MerchantPanel /></div>
         </div>
       )}
 
