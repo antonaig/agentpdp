@@ -1,0 +1,50 @@
+# AgentPDP — systemd unit (installed to /etc/systemd/system/agentpdp.service by scripts/server-setup.sh)
+[Unit]
+Description=AgentPDP (Hono API + built SPA)
+Documentation=https://github.com/aigencyai/agentpdp
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=agentpdp
+Group=agentpdp
+# The server resolves ./dist/web relative to cwd — WorkingDirectory is load-bearing.
+WorkingDirectory=/opt/agentpdp/current
+ExecStart=/usr/bin/node dist/server/server/index.js
+EnvironmentFile=/opt/agentpdp/env
+Environment=NODE_ENV=production
+# Writable HOME for npm/Chromium caches (everything else is read-only, see ProtectSystem).
+Environment=HOME=/opt/agentpdp/shared
+Restart=always
+RestartSec=2
+TimeoutStopSec=15
+KillSignal=SIGTERM
+LimitNOFILE=65536
+
+# Logging -> journald (journalctl -u agentpdp)
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=agentpdp
+
+# Hardening. Deliberately NO MemoryDenyWriteExecute (breaks V8 JIT) and NO RestrictNamespaces
+# (headless Chromium fallback). Playwright launches Chromium with --no-sandbox by default, so
+# NoNewPrivileges is safe.
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ReadWritePaths=/opt/agentpdp
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectHostname=yes
+ProtectClock=yes
+RestrictSUIDSGID=yes
+RestrictRealtime=yes
+LockPersonality=yes
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6 AF_NETLINK
+
+[Install]
+WantedBy=multi-user.target

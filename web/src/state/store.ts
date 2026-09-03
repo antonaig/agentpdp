@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { Product, PolicyState, LedgerEntry, SessionState, ToolName, ToolPolicy, CartLine, ExtractSource } from "@shared/types";
 import { DEFAULT_POLICY } from "@shared/types";
+import type { CompareState } from "@/webmcp/compare";
 
 /**
  * Page state shared by the product view, the WebMCP tool handlers and the merchant panel.
@@ -15,6 +16,15 @@ export interface PendingConfirm {
   args: unknown;
   summary: string;              // human-readable: "Add Queen / White ×1 ($139) to cart"
   resolve: (approved: boolean) => void;
+}
+
+/** A visible trace of something an AGENT (not the human) did on the page: the UI flashes the element and shows a toast. */
+export interface AgentTrace {
+  id: string;
+  kind: "select" | "cart" | "compare";
+  variantId?: string;
+  message: string;              // "Agent selected Queen / White"
+  ts: number;                   // Date.now()
 }
 
 export interface PageStore {
@@ -57,6 +67,15 @@ export interface PageStore {
   setAgentApi: (a: PageStore["agentApi"]) => void;
   registeredTools: ToolName[];
   setRegisteredTools: (t: ToolName[]) => void;
+
+  // agent traces (set by tool handlers so the page can flash/toast what an agent did) — added by the webmcp+product agent
+  agentTrace: AgentTrace | null;
+  setAgentTrace: (t: Omit<AgentTrace, "id" | "ts">) => void;
+  clearAgentTrace: (id?: string) => void;
+
+  // compare_with result shown in a compact drawer on the product page — added by the webmcp+product agent
+  compare: CompareState | null;
+  setCompare: (c: CompareState | null) => void;
 }
 
 const emptySession: SessionState = { pinned: [], cart: [], humanActions: 0 };
@@ -101,6 +120,13 @@ export const useStore = create<PageStore>()(
       setAgentApi: (agentApi) => set({ agentApi }),
       registeredTools: [],
       setRegisteredTools: (registeredTools) => set({ registeredTools }),
+
+      agentTrace: null,
+      setAgentTrace: (t) => set({ agentTrace: { id: crypto.randomUUID(), ts: Date.now(), ...t } }),
+      clearAgentTrace: (id) => set((s) => (id && s.agentTrace && s.agentTrace.id !== id ? {} : { agentTrace: null })),
+
+      compare: null,
+      setCompare: (compare) => set({ compare }),
     }),
     {
       name: "agentpdp",

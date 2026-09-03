@@ -1,0 +1,44 @@
+# AgentPDP — Caddy reverse proxy (installed to /etc/caddy/Caddyfile by scripts/server-setup.sh)
+#
+# Hostnames:
+#   * 188-166-163-33.sslip.io   public wildcard DNS for the droplet IP -> automatic Let's Encrypt
+#   * additional real hostnames are NOT edited into this file. `scripts/set-host.sh <hostname>`
+#     drops a one-liner into /etc/caddy/sites.d/<hostname>.caddy (imported below), validates,
+#     and reloads. Never pre-add a hostname whose DNS does not point here yet — ACME would fail-loop.
+{
+	admin localhost:2019
+}
+
+# Everything an AgentPDP site block needs. Reused by every hostname.
+(agentpdp) {
+	encode zstd gzip
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+		-X-Powered-By
+	}
+
+	reverse_proxy localhost:8787 {
+		header_up X-Real-IP {remote_host}
+	}
+
+	log {
+		output file /var/log/caddy/agentpdp-access.log {
+			roll_size 50MiB
+			roll_keep 5
+			roll_keep_for 720h
+		}
+		format json
+	}
+}
+
+188-166-163-33.sslip.io {
+	import agentpdp
+}
+
+# Real hostnames, one file each, written by scripts/set-host.sh. Glob may match nothing.
+import /etc/caddy/sites.d/*.caddy

@@ -1,0 +1,481 @@
+{
+ "id": 7908004560986,
+ "title": "Luxe Sateen Core Sheet Set",
+ "handle": "luxe-core-sheet-set",
+ "description": "<p dir=\"ltr\"><span style=\"text-decoration: underline;\"><strong>Why You’ll Love It </strong></span></p>\n <p dir=\"ltr\"><span>Softness so indulgent, you’ll order room service at home. Our new Luxe Sateen Sheets are made with luxier upgrades like an increased thread count and 100% long-staple cotton for durability and breathability; a unique 4-over-1 weave pattern that’s soft as buttah’; and a silky-smooth, secret-finish softness you can’t get anywhere else but in bed with us. </span></p>\n <p dir=\"ltr\"><span style=\"text-decoration: underline;\"><strong>How It Feels</strong></span></p>\n <p dir=\"ltr\"><span>Luxuriously soft, breathable, and smooth like buttah’</span><b></b></p>\n <p dir=\"ltr\"><span style=\"text-decoration: underline;\"><strong>How It Looks</strong></span></p>\n <p dir=\"ltr\"><span>Indulgent &amp; inviting, with a beautiful drape over your bed &amp; body </span><b></b></p>\n <p dir=\"ltr\"><span style=\"text-decoration: underline;\"><strong>Best For</strong></span></p>\n <p dir=\"ltr\"><span>Year-round comfort for most sleepers in four-season climates </span><b></b></p>\n <p role=\"presentation\" dir=\"ltr\"><span style=\"text-decoration: underline;\"><strong>Details</strong></span></p>\n <ul>\n<p>Thread count: 480</p><p>Material: 100% long-staple cotton</p>",
+ "published_at": "2026-05-26T11:01:08-04:00",
+ "created_at": "2026-05-11T10:52:17-04:00",
+ "vendor": "Brooklinen",
+ "type": "Sheets",
+ "tags": [
+  "Active Luxe",
+  "Active PLP",
+  "backtocampus",
+  "Best Sellers",
+  "Compare Module Slider",
+  "Discount Codes: Allow",
+  "Double Points",
+  "duplify-export-1",
+  "DY Category 1: Bedding",
+  "DY Category 2: Sheets",
+  "DY Category 3: Luxe Sheets",
+  "DY Feed",
+  "Evergreen: 16",
+  "feedonomics-include",
+  "hidereviewsummary",
+  "Luxe 2.0",
+  "Luxe Bed and Bath Bundle",
+  "Luxe Sateen Dreamweave Hardcore Bundle",
+  "Luxe Sateen Dreamweave Starter Bundle",
+  "Luxe Sateen Hardcore Sheet Bundle",
+  "Luxe Sateen Woven Checkerboard Hardcore Bundle",
+  "Luxe Sheets",
+  "Marketing: Icon",
+  "newarrivals",
+  "Parent Sku",
+  "PDP Gallery Option: Color",
+  "PDP Modal Option: oeko",
+  "PDP Modal Option: Size",
+  "Product Feed",
+  "Retail Bundle Products",
+  "Retail Single Products",
+  "Review Product: luxe-core-sheet-set-2",
+  "Review ProductID: 7580256390",
+  "Romance Description",
+  "Seasonal",
+  "Set of 2 Luxe Sateen Core Sheet Set Bundle",
+  "Sku Expansion",
+  "Slashouts: Default",
+  "Test Luxe Sateen Dreamweave Starter Bundle",
+  "YGroup_luxe_core_sheet_set",
+  "Yotpo Points"
+ ],
+ "price": 16900,
+ "price_min": 16900,
+ "price_max": 25900,
+ "available": true,
+ "price_varies": true,
+ "compare_at_price": null,
+ "compare_at_price_min": 0,
+ "compare_at_price_max": 0,
+ "compare_at_price_varies": false,
+ "variants": [
+  {
+   "id": 43350202646618,
+   "title": "White / Twin",
+   "option1": "White",
+   "option2": "Twin",
+   "option3": null,
+   "sku": "COR-LXS-T1",
+   "requires_shipping": true,
+   "taxable": true,
+   "featured_image": {
+    "id": 40289110622298,
+    "product_id": 7908004560986,
+    "position": 1,
+    "created_at": "2026-05-19T16:47:01-04:00",
+    "updated_at": "2026-05-19T16:47:05-04:00",
+    "alt": "PDP2 Option[White] MAIN",
+    "width": 2048,
+    "height": 2048,
+    "src": "https://cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625",
+    "variant_ids": [
+     43350202646618,
+     43350202679386,
+     43350202712154,
+     43350202744922,
+     43350202777690,
+     43350202810458
+    ]
+   },
+   "available": true,
+   "name": "Luxe Sateen Core Sheet Set - White / Twin",
+   "public_title": "White / Twin",
+   "options": [
+    "White",
+    "Twin"
+   ],
+   "price": 16900,
+   "weight": 1451,
+   "compare_at_price": null,
+   "inventory_management": "shopify",
+   "barcode": "COR-LXS-T1",
+   "featured_media": {
+    "alt": "PDP2 Option[White] MAIN",
+    "id": 29951519424602,
+    "position": 1,
+    "preview_image": {
+     "aspect_ratio": 1,
+     "height": 2048,
+     "width": 2048,
+     "src": "https://cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625"
+    }
+   },
+   "quantity_rule": {
+    "min": 1,
+    "max": null,
+    "increment": 1
+   },
+   "quantity_price_breaks": [],
+   "requires_selling_plan": false,
+   "selling_plan_allocations": []
+  },
+  {
+   "id": 43350202679386,
+   "title": "White / Twin XL",
+   "option1": "White",
+   "option2": "Twin XL",
+   "option3": null,
+   "sku": "COR-LXS-X1",
+   "requires_shipping": true,
+   "taxable": true,
+   "featured_image": {
+    "id": 40289110622298,
+    "product_id": 7908004560986,
+    "position": 1,
+    "created_at": "2026-05-19T16:47:01-04:00",
+    "updated_at": "2026-05-19T16:47:05-04:00",
+    "alt": "PDP2 Option[White] MAIN",
+    "width": 2048,
+    "height": 2048,
+    "src": "https://cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625",
+    "variant_ids": [
+     43350202646618,
+     43350202679386,
+     43350202712154,
+     43350202744922,
+     43350202777690,
+     43350202810458
+    ]
+   },
+   "available": true,
+   "name": "Luxe Sateen Core Sheet Set - White / Twin XL",
+   "public_title": "White / Twin XL",
+   "options": [
+    "White",
+    "Twin XL"
+   ],
+   "price": 16900,
+   "weight": 1510,
+   "compare_at_price": null,
+   "inventory_management": "shopify",
+   "barcode": "COR-LXS-X1",
+   "featured_media": {
+    "alt": "PDP2 Option[White] MAIN",
+    "id": 29951519424602,
+    "position": 1,
+    "preview_image": {
+     "aspect_ratio": 1,
+     "height": 2048,
+     "width": 2048,
+     "src": "https://cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625"
+    }
+   },
+   "quantity_rule": {
+    "min": 1,
+    "max": null,
+    "increment": 1
+   },
+   "quantity_price_breaks": [],
+   "requires_selling_plan": false,
+   "selling_plan_allocations": []
+  },
+  {
+   "id": 43350202712154,
+   "title": "White / Full",
+   "option1": "White",
+   "option2": "Full",
+   "option3": null,
+   "sku": "COR-LXS-F1",
+   "requires_shipping": true,
+   "taxable": true,
+   "featured_image": {
+    "id": 40289110622298,
+    "product_id": 7908004560986,
+    "position": 1,
+    "created_at": "2026-05-19T16:47:01-04:00",
+    "updated_at": "2026-05-19T16:47:05-04:00",
+    "alt": "PDP2 Option[White] MAIN",
+    "width": 2048,
+    "height": 2048,
+    "src": "https://cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625",
+    "variant_ids": [
+     43350202646618,
+     43350202679386,
+     43350202712154,
+     43350202744922,
+     43350202777690,
+     43350202810458
+    ]
+   },
+   "available": true,
+   "name": "Luxe Sateen Core Sheet Set - White / Full",
+   "public_title": "White / Full",
+   "options": [
+    "White",
+    "Full"
+   ],
+   "price": 19900,
+   "weight": 1860,
+   "compare_at_price": null,
+   "inventory_management": "shopify",
+   "barcode": "COR-LXS-F1",
+   "featured_media": {
+    "alt": "PDP2 Option[White] MAIN",
+    "id": 29951519424602,
+    "position": 1,
+    "preview_image": {
+     "aspect_ratio": 1,
+     "height": 2048,
+     "width": 2048,
+     "src": "https://cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625"
+    }
+   },
+   "quantity_rule": {
+    "min": 1,
+    "max": null,
+    "increment": 1
+   },
+   "quantity_price_breaks": [],
+   "requires_selling_plan": false,
+   "selling_plan_allocations": []
+  },
+  {
+   "id": 43350202744922,
+   "title": "White / Queen",
+   "option1": "White",
+   "option2": "Queen",
+   "option3": null,
+   "sku": "COR-LXS-Q1",
+   "requires_shipping": true,
+   "taxable": true,
+   "featured_image": {
+    "id": 40289110622298,
+    "product_id": 7908004560986,
+    "position": 1,
+    "created_at": "2026-05-19T16:47:01-04:00",
+    "updated_at": "2026-05-19T16:47:05-04:00",
+    "alt": "PDP2 Option[White] MAIN",
+    "width": 2048,
+    "height": 2048,
+    "src": "https://cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625",
+    "variant_ids": [
+     43350202646618,
+     43350202679386,
+     43350202712154,
+     43350202744922,
+     43350202777690,
+     43350202810458
+    ]
+   },
+   "available": true,
+   "name": "Luxe Sateen Core Sheet Set - White / Queen",
+   "public_title": "White / Queen",
+   "options": [
+    "White",
+    "Queen"
+   ],
+   "price": 20900,
+   "weight": 2032,
+   "compare_at_price": null,
+   "inventory_management": "shopify",
+   "barcode": "COR-LXS-Q1",
+   "featured_media": {
+    "alt": "PDP2 Option[White] MAIN",
+    "id": 29951519424602,
+    "position": 1,
+    "preview_image": {
+     "aspect_ratio": 1,
+     "height": 2048,
+     "width": 2048,
+     "src": "https://cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625"
+    }
+   },
+   "quantity_rule": {
+    "min": 1,
+    "max": null,
+    "increment": 1
+   },
+   "quantity_price_breaks": [],
+   "requires_selling_plan": false,
+   "selling_plan_allocations": []
+  },
+  {
+   "id": 43350202777690,
+   "title": "White / King",
+   "option1": "White",
+   "option2": "King",
+   "option3": null,
+   "sku": "COR-LXS-K1",
+   "requires_shipping": true,
+   "taxable": true,
+   "featured_image": {
+    "id": 40289110622298,
+    "product_id": 7908004560986,
+    "position": 1,
+    "created_at": "2026-05-19T16:47:01-04:00",
+    "updated_at": "2026-05-19T16:47:05-04:00",
+    "alt": "PDP2 Option[White] MAIN",
+    "width": 2048,
+    "height": 2048,
+    "src": "https://cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625",
+    "variant_ids": [
+     43350202646618,
+     43350202679386,
+     43350202712154,
+     43350202744922,
+     43350202777690,
+     43350202810458
+    ]
+   },
+   "available": true,
+   "name": "Luxe Sateen Core Sheet Set - White / King",
+   "public_title": "White / King",
+   "options": [
+    "White",
+    "King"
+   ],
+   "price": 23900,
+   "weight": 2472,
+   "compare_at_price": null,
+   "inventory_management": "shopify",
+   "barcode": "COR-LXS-K1",
+   "featured_media": {
+    "alt": "PDP2 Option[White] MAIN",
+    "id": 29951519424602,
+    "position": 1,
+    "preview_image": {
+     "aspect_ratio": 1,
+     "height": 2048,
+     "width": 2048,
+     "src": "https://cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625"
+    }
+   },
+   "quantity_rule": {
+    "min": 1,
+    "max": null,
+    "increment": 1
+   },
+   "quantity_price_breaks": [],
+   "requires_selling_plan": false,
+   "selling_plan_allocations": []
+  },
+  {
+   "id": 43350202810458,
+   "title": "White / Cali King",
+   "option1": "White",
+   "option2": "Cali King",
+   "option3": null,
+   "sku": "COR-LXS-C1",
+   "requires_shipping": true,
+   "taxable": true,
+   "featured_image": {
+    "id": 40289110622298,
+    "product_id": 7908004560986,
+    "position": 1,
+    "created_at": "2026-05-19T16:47:01-04:00",
+    "updated_at": "2026-05-19T16:47:05-04:00",
+    "alt": "PDP2 Option[White] MAIN",
+    "width": 2048,
+    "height": 2048,
+    "src": "https://cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625",
+    "variant_ids": [
+     43350202646618,
+     43350202679386,
+     43350202712154,
+     43350202744922,
+     43350202777690,
+     43350202810458
+    ]
+   },
+   "available": true,
+   "name": "Luxe Sateen Core Sheet Set - White / Cali King",
+   "public_title": "White / Cali King",
+   "options": [
+    "White",
+    "Cali King"
+   ],
+   "price": 23900,
+   "weight": 2458,
+   "compare_at_price": null,
+   "inventory_management": "shopify",
+   "barcode": "COR-LXS-C1",
+   "featured_media": {
+    "alt": "PDP2 Option[White] MAIN",
+    "id": 29951519424602,
+    "position": 1,
+    "preview_image": {
+     "aspect_ratio": 1,
+     "height": 2048,
+     "width": 2048,
+     "src": "https://cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625"
+    }
+   },
+   "quantity_rule": {
+    "min": 1,
+    "max": null,
+    "increment": 1
+   },
+   "quantity_price_breaks": [],
+   "requires_selling_plan": false,
+   "selling_plan_allocations": []
+  }
+ ],
+ "images": [
+  "//cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625",
+  "//cdn.shopify.com/s/files/1/0951/7126/files/BKL_24-05_Bedding_Luxe_Pebble_Detail_1x_WOgrey_c2e8da80-c9a9-4728-a936-4e99aa7daa82.jpg?v=1779223624",
+  "//cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-01_Bedding_Luxe_TandemStripeinFreshMoss_Detail_1x_WOgrey_41b4c61f-a6ab-4ee6-a053-f469d4617ffb.jpg?v=1779223625"
+ ],
+ "featured_image": "//cdn.shopify.com/s/files/1/0951/7126/files/BKL_25-11_Bedding_Luxe_White_CSS_1_x_PDP_WO_9a378fea-9426-49f3-86ef-f15ec88bdae4.jpg?v=1779223625",
+ "options": [
+  {
+   "name": "Color",
+   "position": 1,
+   "values": [
+    "White",
+    "Cream",
+    "Pebble",
+    "Tandem Stripe in Pebble",
+    "Oak",
+    "Frost",
+    "Tandem Stripe in Frost",
+    "Calm Waters in Frost",
+    "Storm",
+    "Cloud",
+    "Slate",
+    "Tandem Stripe in Storm",
+    "Abyss",
+    "Aegean",
+    "Fresh Moss",
+    "Tandem Stripe in Fresh Moss",
+    "Tandem Stripe in Dried Grass",
+    "Tandem Stripe in Papaya",
+    "Tandem Stripe in Mineral",
+    "Floating Petals in Daisy Multi",
+    "Floating Petals in Frost Multi",
+    "Blooming Fields in Aegean",
+    "Blooming Fields in Mahogany",
+    "Nutmeg",
+    "Calm Waters in Nutmeg",
+    "Tandem Stripe in Kelp",
+    "Tandem Stripe in Maple",
+    "Tandem Stripe in Ochre",
+    "Warm Terracotta"
+   ]
+  },
+  {
+   "name": "Size",
+   "position": 2,
+   "values": [
+    "Twin",
+    "Twin XL",
+    "Full",
+    "Queen",
+    "King",
+    "Cali King"
+   ]
+  }
+ ],
+ "url": "/products/luxe-core-sheet-set",
+ "requires_selling_plan": false
+}

@@ -1,0 +1,37 @@
+/* Generator landing. Plain, short, the URL box is the point. */
+.gen { min-height: 100vh; display: flex; flex-direction: column; }
+.gen-top { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; padding-bottom: 0; }
+.gen-mark { font-weight: 700; letter-spacing: -.01em; color: var(--ink); text-decoration: none; }
+.gen-hero { padding-top: 56px; padding-bottom: 40px; }
+.gen-hero h1 { font-size: clamp(32px, 5vw, 48px); line-height: 1.08; letter-spacing: -.02em; margin: 0 0 14px; font-weight: 700; max-width: 760px; }
+.gen-sub { font-size: 17px; color: var(--ink-2); margin: 0 0 28px; max-width: 620px; }
+.gen-form { display: flex; gap: 10px; flex-wrap: wrap; max-width: 760px; }
+.gen-form input.text { flex: 1 1 320px; font-size: 16px; }
+.gen-form .btn { white-space: nowrap; }
+.gen-error { flex-basis: 100%; margin: 0; color: var(--bad); font-size: 13.5px; }
+.gen-chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 16px; }
+.gen-chips-label { font-size: 12.5px; color: var(--ink-3); margin-right: 2px; }
+.gen-chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: 13px; color: var(--ink-2); cursor: pointer; }
+.gen-chip:hover { border-color: var(--ink-3); color: var(--ink); }
+
+.gen-section { padding-top: 32px; padding-bottom: 32px; border-top: 1px solid var(--line); }
+.gen-section h2 { font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); margin: 0 0 18px; font-weight: 600; }
+.gen-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; counter-reset: step; margin: 0; padding: 0; list-style: none; }
+.gen-step::before { counter-increment: step; content: counter(step); display: inline-flex; width: 24px; height: 24px; border-radius: 999px; background: var(--ink); color: #fff; font-size: 12px; font-weight: 600; align-items: center; justify-content: center; margin-bottom: 10px; }
+.gen-step h3 { margin: 0 0 4px; font-size: 15px; }
+.gen-step p { margin: 0; color: var(--ink-2); font-size: 14px; }
+
+.gen-tools { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+.gen-tool { background: var(--surface); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.gen-tool-head { display: flex; gap: 10px; align-items: baseline; justify-content: space-between; }
+.gen-tool .mono { font-weight: 600; color: var(--ink); }
+.gen-kind { font-size: 11.5px; color: var(--ink-3); white-space: nowrap; }
+.gen-kind.write { color: var(--warn); }
+.gen-tool p { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+
+.gen-limits p { margin: 0; color: var(--ink-2); max-width: 680px; }
+.gen-foot { margin-top: auto; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 13px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.gen-foot a { color: var(--ink-2); }
+
+@media (max-width: 720px) { .gen-steps, .gen-tools { grid-template-columns: 1fr; } .gen-hero { padding-top: 32px; } }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
