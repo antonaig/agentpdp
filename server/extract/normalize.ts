@@ -2,7 +2,18 @@
 import { createHash } from "node:crypto";
 import type { ExtractSource, Money, Product, Variant } from "../../shared/types.js";
 import type { ParsedProduct, ParsedVariant } from "./types.js";
-import { absUrl, htmlToText } from "./html.js";
+import { absUrl, decodeEntities, htmlToText } from "./html.js";
+
+/** WooCommerce and friends double-encode ("&amp;amp;"); decode until stable (max 3 passes). */
+export function cleanText(s: string | undefined): string {
+  let t = (s ?? "").trim();
+  for (let i = 0; i < 3; i++) {
+    const next = decodeEntities(t);
+    if (next === t) break;
+    t = next;
+  }
+  return t.replace(/\s+/g, " ").trim();
+}
 
 export const DESCRIPTION_CAP = 4000;
 const MAX_SPECS = 40;
@@ -22,7 +33,9 @@ export function normalizeUrl(input: string): string {
 /** Mine "Key: value" lines out of a plain-text description. Conservative: short keys, single line, no URLs. */
 export function mineSpecs(text: string): Record<string, string> {
   const specs: Record<string, string> = {};
-  for (const raw of text.split("\n")) {
+  // Lines first, then sentences ("Seat height: 18 in. Finish: natural oil.") — a period followed by a capital starts a new candidate.
+  const candidates = text.split("\n").flatMap((l) => l.split(/(?<=\.)\s+(?=[A-Z])/));
+  for (const raw of candidates) {
     const line = raw.replace(/^[-•*]\s*/, "").trim();
     const m = /^([A-Za-z][A-Za-z0-9 /&()'+.-]{1,40}?)\s*:\s+(.{1,200})$/.exec(line);
     if (!m) continue;
@@ -57,7 +70,7 @@ export function normalizeProduct(p: ParsedProduct, ctx: NormalizeContext): { pro
   const url = normalizeUrl(ctx.inputUrl);
   const canonicalUrl = p.canonicalUrl ?? normalizeUrl(ctx.finalUrl);
   const host = new URL(canonicalUrl).host || new URL(url).host;
-  const title = (p.title ?? "").trim() || "Untitled product";
+  const title = cleanText(p.title) || "Untitled product";
   const productId = p.id?.trim() || stableId(canonicalUrl);
 
   // Currency: variant-level → product-level → assume USD with a warning. Never silently invent one.
@@ -82,7 +95,7 @@ export function normalizeProduct(p: ParsedProduct, ctx: NormalizeContext): { pro
     const id = seen.has(vid) ? `${vid}-${i + 1}` : vid;
     seen.add(id);
     const opts = cleanOptions(v.options);
-    const vt = (v.title ?? "").trim() || Object.values(opts).join(" / ") || title;
+    const vt = cleanText(v.title) || Object.values(opts).join(" / ") || title;
     const price = typeof v.price === "number" ? v.price : 0;
     if (typeof v.price !== "number") warnings.push(`variant "${vt}" has no price on the page; shown as 0`);
     const variant: Variant = { id, title: vt, options: opts, price: money(price, v.currency ?? currency), available: v.available };
@@ -121,8 +134,8 @@ export function normalizeProduct(p: ParsedProduct, ctx: NormalizeContext): { pro
 
   const specs: Record<string, string> = {};
   for (const [k, v] of Object.entries(p.specs ?? {})) {
-    const key = k.trim();
-    const val = String(v).trim();
+    const key = cleanText(k);
+    const val = cleanText(String(v));
     if (key && val && Object.keys(specs).length < MAX_SPECS) specs[key] = val.slice(0, 300);
   }
   for (const [k, v] of Object.entries(mineSpecs(description))) {
@@ -146,7 +159,7 @@ export function normalizeProduct(p: ParsedProduct, ctx: NormalizeContext): { pro
     cart: p.cart ?? { kind: "pdp_link" },
     extractedAt: new Date().toISOString(),
   };
-  if (p.brand?.trim()) product.brand = p.brand.trim();
+  if (cleanText(p.brand)) product.brand = cleanText(p.brand);
   if (rep.compareAtPrice) product.compareAtPrice = rep.compareAtPrice;
   if (min !== max) product.priceRange = { min: money(min, currency), max: money(max, currency) };
   if (p.rating && Number.isFinite(p.rating.value)) product.rating = { value: p.rating.value, ...(p.rating.count !== undefined ? { count: p.rating.count } : {}) };
@@ -156,8 +169,8 @@ export function normalizeProduct(p: ParsedProduct, ctx: NormalizeContext): { pro
 function cleanOptions(o: Record<string, string>): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [k, v] of Object.entries(o ?? {})) {
-    const key = k.trim();
-    const val = String(v ?? "").trim();
+    const key = cleanText(k);
+    const val = cleanText(String(v ?? ""));
     if (!key || !val) continue;
     if (key.toLowerCase() === "title" && val.toLowerCase() === "default title") continue;
     out[key] = val;

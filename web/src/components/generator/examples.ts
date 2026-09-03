@@ -5,14 +5,15 @@ export interface ExampleUrl {
 }
 
 /**
- * Real product pages, verified 2026-09-04 ~01:50 IDT: page HTML 200 and `<url>.json` 200 with a product record.
- * Brooklinen and Allbirds are Shopify stores, so the fast path (`/products/<handle>.json`) applies.
- * The orchestrator may swap this list for the wider verified matrix. Keep it the one place example URLs live.
+ * Real product pages, verified live on 2026-09-04 with `server/scripts/matrix.ts` (nothing mocked).
+ * Mix of extraction paths so the demo shows the ladder: Shopify feed, schema.org JSON-LD, and a headless render
+ * through a Cloudflare challenge. Keep this the one place example URLs live.
  */
 export const EXAMPLE_URLS: ExampleUrl[] = [
-  { label: "Brooklinen · Luxe Sateen sheet set", url: "https://www.brooklinen.com/products/luxe-core-sheet-set", note: "Color × Size, 174 variants" },
-  { label: "Brooklinen · Super-Plush towel set", url: "https://www.brooklinen.com/products/super-plush-4-piece-bath-towel-set", note: "7 colors" },
-  { label: "Brooklinen · Classic Percale sheet set", url: "https://www.brooklinen.com/products/classic-core-sheet-set", note: "Color × Size, 162 variants" },
-  { label: "Allbirds · Women's Dasher NZ", url: "https://www.allbirds.com/products/womens-dasher-nz-blizzard-deep-navy", note: "13 sizes" },
-  { label: "Allbirds · Men's Cruiser", url: "https://www.allbirds.com/products/mens-cruiser-shadow-blue-natural-white-sole", note: "13 sizes" },
+  { label: "Brooklinen · Luxe Sateen sheet set", url: "https://www.brooklinen.com/products/luxe-core-sheet-set", note: "Shopify feed · Color × Size, 174 variants · real cart link" },
+  { label: "Allbirds · Women's Dasher NZ", url: "https://www.allbirds.com/products/womens-dasher-nz-blizzard-deep-navy", note: "Shopify feed · 13 sizes · real cart link" },
+  { label: "SKIMS · Fits Everybody T-shirt bra", url: "https://skims.com/products/fits-everybody-t-shirt-bra-onyx", note: "schema.org ProductGroup · 65 variants" },
+  { label: "Nike · Air Force 1 '07", url: "https://www.nike.com/t/air-force-1-07-mens-shoes-jBrhbr/CW2288-111", note: "schema.org ProductGroup · 22 sizes" },
+  { label: "Samsung · Galaxy S25 Ultra", url: "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/", note: "schema.org Product" },
+  { label: "LEGO · Millennium Falcon", url: "https://www.lego.com/en-us/product/millennium-falcon-75375", note: "Cloudflare challenge → rendered in a headless browser (~6 s)" },
 ];

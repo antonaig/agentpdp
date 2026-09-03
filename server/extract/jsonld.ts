@@ -35,7 +35,7 @@ export function extractJsonLdBlocks(html: string, doc?: Doc): unknown[] {
 export function lenientJsonParse(text: string): unknown {
   let t = text.trim();
   // CDATA wrappers and HTML comments occasionally appear inside the script body.
-  t = t.replace(/^<!--/, "").replace(/-->$/, "").replace(/^\/\/<!\[CDATA\[/, "").replace(/\/\/\]\]>$/, "").replace(/<!--[\s\S]*?-->/g, "").trim();
+  t = t.replace(/<!--[\s\S]*?-->/g, "").replace(/^\/\/\s*<!\[CDATA\[/, "").replace(/\/\/\s*\]\]>$/, "").replace(/^<!\[CDATA\[/, "").replace(/\]\]>$/, "").trim();
   const CONTROL = /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g;
   const attempts = [
     t,
@@ -276,7 +276,10 @@ export function productFromNode(node: Json, base: string): ParsedProduct | null 
   const aggregate = groupOffers.find((o) => o.low !== undefined || o.high !== undefined);
 
   // ProductGroup → hasVariant[] each a Product with its own offers
-  const variantNodes = asArray<Json>(node.hasVariant).filter((v) => v && typeof v === "object");
+  const allVariantNodes = asArray<Json>(node.hasVariant).filter((v) => v && typeof v === "object");
+  // Link-only stubs ({ url }) point at sibling products (other colorways); they are not variants of this page.
+  const variantNodes = allVariantNodes.filter((v) => v.offers || v.sku || v.name || v.size || v.color);
+  if (variantNodes.length < allVariantNodes.length) warnings.push(`${allVariantNodes.length - variantNodes.length} linked sibling product(s) (other colorways) not included as variants`);
   for (const vn of variantNodes) {
     const offers = flattenOffers(vn.offers).map((o) => readOffer(o, base));
     const primary = offers.find((o) => o.price !== undefined) ?? offers[0];

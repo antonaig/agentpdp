@@ -11,18 +11,21 @@ import { extractProduct } from "../extract/index.js";
 import { closeBrowser } from "../extract/headless.js";
 
 const DEFAULT_URLS = [
-  // Shopify (feed)
+  // Shopify (storefront feed)
   "https://www.brooklinen.com/products/luxe-core-sheet-set",
-  "https://www.allbirds.com/products/mens-tree-runners",
-  // Shopify headless storefront (Next.js RSC, geo-redirects to /en-xx/)
+  "https://www.allbirds.com/products/mens-strider-explore",
+  // Shopify Plus headless storefront (Next.js RSC; feed 404s; geo-redirects to /en-xx/)
   "https://skims.com/products/fits-everybody-t-shirt-bra-onyx",
-  // Salesforce Commerce Cloud behind Akamai
+  // Salesforce Commerce Cloud behind Akamai Bot Manager
   "https://shop.lululemon.com/p/womens-leggings/Align-Pant-2/_/prod2020012",
-  // Nike (custom platform)
+  // Nike (custom platform, JSON-LD ProductGroup)
   "https://www.nike.com/t/air-force-1-07-mens-shoes-jBrhbr/CW2288-111",
-  // Diverse others
-  "https://www.ikea.com/us/en/p/kallax-shelf-unit-white-80275887/",
-  "https://www.ebay.com/itm/126588475290",
+  // Diverse others: Zappos (custom), Bose (Salesforce Commerce Cloud, no bot wall), Samsung (custom), WooCommerce, Cloudflare-walled
+  "https://www.zappos.com/p/hoka-clifton-11-black-neon-nebula/product/10047368/color/1130747",
+  "https://www.bose.com/p/headphones/bose-quietcomfort-ultra-headphones-2nd-gen/QCUH2-HEADPHONEARN.html",
+  "https://www.samsung.com/us/smartphones/galaxy-s25-ultra/buy/",
+  "https://offermanwoodshop.com/store/kindlin/hearth-home/kitchen-trivets",
+  "https://www.lego.com/en-us/product/millennium-falcon-75375",
   "https://www.gildan.com/en-us/products/mens-heavy-cotton-t-shirt-5000",
 ];
 

@@ -28,28 +28,33 @@ export function browserHeaders(accept = HTML_ACCEPT): Record<string, string> {
   };
 }
 
-/** Signatures of common bot-protection interstitials. Matched case-insensitively on the first 200 KB. */
-const CHALLENGE_SIGNATURES: { vendor: string; re: RegExp }[] = [
-  { vendor: "Akamai", re: /errors\.edgesuite\.net|<title>\s*Access Denied\s*<\/title>|Reference&#32;&#35;\d|_abck/i },
-  { vendor: "Cloudflare", re: /cf-chl|__cf_chl|challenge-platform|cf_chl_opt|<title>\s*Just a moment\.\.\.\s*<\/title>|Attention Required!\s*\|\s*Cloudflare|cf-browser-verification/i },
-  { vendor: "PerimeterX", re: /_pxAppId|px-captcha|perimeterx|human-challenge|Please verify you are a human/i },
-  { vendor: "DataDome", re: /datadome|captcha-delivery\.com|dd\.js"/i },
-  { vendor: "Imperva", re: /_Incapsula_Resource|Request unsuccessful\. Incapsula|incapsula/i },
-  { vendor: "Kasada", re: /kpsdk|ips\.js\?/i },
+/**
+ * Signatures of common bot-protection interstitials. "hard" signatures only appear on a wall page; "soft" ones
+ * (cookie names, bot-management scripts) also ship on normal pages, so they count only with an error status or a tiny body.
+ */
+const CHALLENGE_SIGNATURES: { vendor: string; re: RegExp; soft?: boolean }[] = [
+  { vendor: "Akamai", re: /errors\.edgesuite\.net|<title>\s*Access Denied\s*<\/title>|Reference&#32;&#35;\d/i },
+  { vendor: "Akamai", re: /_abck|ak_bmsc|bm_sz/i, soft: true },
+  { vendor: "Cloudflare", re: /<title>\s*Just a moment\.\.\.\s*<\/title>|Attention Required!\s*\|\s*Cloudflare|cf-browser-verification|cf_chl_opt/i },
+  { vendor: "Cloudflare", re: /cf-chl|__cf_chl|challenge-platform|cdn-cgi\/challenge/i, soft: true },
+  { vendor: "PerimeterX", re: /px-captcha|Please verify you are a human|Press & Hold to confirm you are/i },
+  { vendor: "PerimeterX", re: /_pxAppId|perimeterx|human-challenge/i, soft: true },
+  { vendor: "DataDome", re: /captcha-delivery\.com|geo\.captcha-delivery/i },
+  { vendor: "DataDome", re: /datadome/i, soft: true },
+  { vendor: "Imperva", re: /_Incapsula_Resource|Request unsuccessful\. Incapsula/i },
+  { vendor: "Imperva", re: /incapsula/i, soft: true },
+  { vendor: "Kasada", re: /kpsdk|ips\.js\?/i, soft: true },
   { vendor: "Distil", re: /Pardon Our Interruption|distil_r_captcha/i },
-  { vendor: "F5/Shape", re: /Please enable JavaScript to view the page content|TSPD_101/i },
+  { vendor: "F5/Shape", re: /TSPD_101|Please enable JavaScript to view the page content/i, soft: true },
 ];
 
 /** Returns the vendor name when the body looks like a bot-challenge page, else null. */
 export function detectBotChallenge(text: string, status: number): string | null {
   const head = text.slice(0, 200_000);
+  const suspicious = status >= 400 || head.length < 20_000;
   for (const sig of CHALLENGE_SIGNATURES) {
-    if (sig.re.test(head)) {
-      // Real product pages can mention these vendors in inline scripts (e.g. Akamai _abck cookie code).
-      // Only treat a match as a wall when the page is short or the status already says "no".
-      const soft = /_abck|_pxAppId|kpsdk|datadome|incapsula/i.test(sig.re.source);
-      if (!soft || status >= 400 || head.length < 20_000) return sig.vendor;
-    }
+    if (!sig.re.test(head)) continue;
+    if (!sig.soft || suspicious) return sig.vendor;
   }
   if ((status === 403 || status === 503 || status === 429) && head.length < 20_000 && /captcha|verify|robot|blocked|denied|unusual traffic/i.test(head)) {
     return "unknown";

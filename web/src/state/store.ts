@@ -78,6 +78,26 @@ export interface PageStore {
   setCompare: (c: CompareState | null) => void;
 }
 
+
+function safeStorage(): Storage {
+  try {
+    const ls = (globalThis as any).localStorage as Storage | undefined;
+    if (ls && typeof ls.getItem === "function" && typeof ls.setItem === "function") {
+      ls.setItem("__agentpdp_probe", "1"); ls.removeItem("__agentpdp_probe");
+      return ls;
+    }
+  } catch { /* fall through */ }
+  const mem = new Map<string, string>();
+  return {
+    get length() { return mem.size; },
+    clear: () => mem.clear(),
+    getItem: (k) => (mem.has(k) ? mem.get(k)! : null),
+    key: (i) => Array.from(mem.keys())[i] ?? null,
+    removeItem: (k) => { mem.delete(k); },
+    setItem: (k, v) => { mem.set(k, String(v)); },
+  } as Storage;
+}
+
 const emptySession: SessionState = { pinned: [], cart: [], humanActions: 0 };
 
 export const useStore = create<PageStore>()(
@@ -130,7 +150,9 @@ export const useStore = create<PageStore>()(
     }),
     {
       name: "agentpdp",
-      storage: createJSONStorage(() => localStorage),
+      // Node 26 ships an experimental `localStorage` global that shadows jsdom's in tests and is undefined
+      // outside the browser; fall back to an in-memory Storage so the store never crashes on setState.
+      storage: createJSONStorage(() => safeStorage()),
       partialize: (s) => ({ policy: s.policy, ledger: s.ledger }),
     },
   ),

@@ -123,6 +123,7 @@ export async function extractProduct(input: string, opts: ExtractOptions = {}): 
       const walled = rendered.html.length < 20_000 && /Access Denied|Just a moment|verify you are a human|captcha/i.test(rendered.html);
       rungs.push({ name: "headless", ok: !walled, ms: rendered.ms, note: `rendered ${rendered.html.length} chars, HTTP ${rendered.status ?? "?"}, final ${rendered.finalUrl}${walled ? ", still a bot wall" : ""}` });
       if (!walled) {
+        blockedNote = null; // the browser got a real page; whatever happens next is a data problem, not a wall
         const out = await parseHtmlRungs(rendered.html, rendered.finalUrl, key, rungs, fetchOpts, shopifyTargetFromHtml(rendered.html, rendered.finalUrl));
         if (out) return finish(out.parsed, out.source, rendered.finalUrl, ["rendered with headless browser"]);
       } else blockedNote = blockedNote ?? "bot wall (headless)";
@@ -133,11 +134,14 @@ export async function extractProduct(input: string, opts: ExtractOptions = {}): 
     rungs.push({ name: "headless", ok: false, ms: 0, note: "disabled (HEADLESS_FALLBACK=0)" });
   }
 
-  // 6. Nothing worked: say why.
-  if (fetchError && !page) return fail(fetchError.code, fetchError.message);
-  if (blockedNote) return fail("blocked_by_site", `The site refused automated access (${blockedNote}).`);
-  if (page && page.status >= 400) return fail("fetch_failed", `The page returned HTTP ${page.status}.`);
-  return fail("no_product", "No product data found: no Shopify feed, no schema.org Product JSON-LD, no OpenGraph product meta.");
+  // 6. Nothing worked: say why. A page the browser rendered fine is a data problem, not a transport problem.
+  const rendered = rungs.some((r) => r.name === "headless" && r.ok);
+  if (!rendered) {
+    if (fetchError && !page) return fail(fetchError.code, fetchError.message);
+    if (blockedNote) return fail("blocked_by_site", `The site refused automated access (${blockedNote}).`);
+    if (page && page.status >= 400) return fail("fetch_failed", `The page returned HTTP ${page.status}.`);
+  }
+  return fail("no_product", `No product data found${rendered ? " even after rendering in a browser" : ""}: no Shopify feed, no schema.org Product JSON-LD, no OpenGraph product meta.`);
 }
 
 interface FetchOpts {
