@@ -15,8 +15,11 @@ app.route("/api", askRoutes);
 // Static SPA (built by vite into dist/web). In dev, vite serves the SPA itself.
 const webDir = "./dist/web";
 if (existsSync(`${webDir}/index.html`)) {
-  const index = readFileSync(`${webDir}/index.html`, "utf8");
   app.use("/assets/*", serveStatic({ root: webDir }));
   app.get("/favicon.svg", serveStatic({ root: webDir, path: "favicon.svg" }));
-  app.get("*", (c) => c.html(index));
+  // Read per request (1 KB) so a rebuild with new asset hashes is never served from a stale in-memory copy.
+  app.get("*", (c) => {
+    if (c.req.path.startsWith("/api/") || c.req.path.startsWith("/assets/")) return c.notFound();
+    return c.html(readFileSync(`${webDir}/index.html`, "utf8"));
+  });
 }

@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { waitForTools } from "./helpers";
 
 // Full native WebMCP flow in Chrome with the runtime flags. Every tool call goes through document.modelContext.executeTool,
 // i.e. the page's real execute handler (gate → handler → ledger). Selectors rely on data-testid attributes agreed with the UI:
@@ -21,7 +22,7 @@ async function call(page: Page, name: string, args: Record<string, unknown> = {}
 async function openPage(page: Page) {
   const u = new URL(PDP);
   await page.goto(`/p/${u.host}${u.pathname}`);
-  await page.waitForFunction(async () => { const mc = (document as any).modelContext; return mc && (await mc.getTools()).length >= 8; }, undefined, { timeout: 60_000 });
+  await waitForTools(page, 8, 60_000);
 }
 
 test.describe("generated page", () => {
@@ -30,8 +31,10 @@ test.describe("generated page", () => {
     const ann = await page.evaluate(async () => Object.fromEntries(((await (document as any).modelContext.getTools()) as any[]).map((t) => [t.name, t.annotations ?? {}])));
     expect(ann.get_product.readOnlyHint).toBe(true);
     expect(ann.list_variants.readOnlyHint).toBe(true);
-    expect(ann.add_to_cart.consequentialHint).toBe(true);
-    expect(ann.select_variant.readOnlyHint).not.toBe(true);
+    // Chrome 152 surfaces only readOnlyHint/untrustedContentHint from getTools(); consequentialHint is passed at
+    // registration but not echoed back, so assert the write tools are not marked read-only.
+    expect(ann.add_to_cart.readOnlyHint).toBe(false);
+    expect(ann.select_variant.readOnlyHint).toBe(false);
   });
 
   test("list_variants → select_variant updates the screen and the ledger", async ({ page }) => {
@@ -40,12 +43,13 @@ test.describe("generated page", () => {
     expect(lv.ok).toBe(true);
     expect(Array.isArray(lv.variants) && lv.variants.length).toBeTruthy();
     const target = lv.variants[lv.variants.length - 1];
-    const sel = await call(page, "select_variant", { variant_id: target.id });
+    const sel = await call(page, "select_variant", { variant_id: target.variant_id });
     expect(sel.ok).toBe(true);
-    expect(sel.variant.id).toBe(target.id);
+    expect(sel.variant.variant_id ?? sel.variant.id).toBe(target.variant_id);
     const state = await call(page, "get_session_state", {});
-    expect(state.session.selectedVariantId).toBe(target.id);
-    await expect(page.getByTestId("ledger-row").first()).toContainText("select_variant");
+    expect(state.session.selectedVariantId).toBe(target.variant_id);
+    // Ledger is newest-first and get_session_state was the last call, so look for the select_variant row anywhere.
+    await expect(page.getByTestId("ledger-row").filter({ hasText: "select_variant" }).first()).toBeVisible();
   });
 
   test("add_to_cart under Confirm waits for the human, then returns a checkout URL", async ({ page }) => {
@@ -53,12 +57,13 @@ test.describe("generated page", () => {
     await page.getByTestId("policy-add_to_cart-confirm").click();
     const lv = await call(page, "list_variants", { available_only: true });
     const v = lv.variants[0];
+    expect(v.variant_id).toBeTruthy();
     const pending = page.evaluate(async ([id]) => {
       const mc = (document as any).modelContext;
       const t = ((await mc.getTools()) as any[]).find((x) => x.name === "add_to_cart");
       const raw = await mc.executeTool(t, JSON.stringify({ variant_id: id, quantity: 1 }));
       return typeof raw === "string" ? JSON.parse(raw) : raw;
-    }, [v.id] as const);
+    }, [v.variant_id] as const);
     await page.getByTestId("confirm-approve").click({ timeout: 15_000 });
     const res = await pending;
     expect(res.ok).toBe(true);
@@ -94,7 +99,7 @@ test.describe("generated page", () => {
 test.describe("generator page", () => {
   test("make_agent_ready returns the agent-ready page URL", async ({ page, baseURL }) => {
     await page.goto("/");
-    await page.waitForFunction(async () => { const mc = (document as any).modelContext; return mc && (await mc.getTools()).some((t: any) => t.name === "make_agent_ready"); }, undefined, { timeout: 30_000 });
+    await waitForTools(page, 1, 30_000, "make_agent_ready");
     const res = await call(page, "make_agent_ready", { url: PDP });
     expect(res.ok).toBe(true);
     const u = new URL(PDP);

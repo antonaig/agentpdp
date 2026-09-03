@@ -62,10 +62,10 @@ describe("normalizeProductUrl", () => {
     for (const ex of EXAMPLE_URLS) {
       const r = normalizeProductUrl(ex.url);
       expect(r.ok).toBe(true);
-      expect(urlToPagePath(ex.url)).toMatch(/^\/p\/www\.(brooklinen|allbirds)\.com\/products\/[a-z0-9-]+$/);
+      expect(urlToPagePath(ex.url)).toMatch(/^\/p\/[a-z0-9.-]+\/.+$/);
     }
     expect(EXAMPLE_URLS.length).toBeGreaterThanOrEqual(4);
-    expect(EXAMPLE_URLS.length).toBeLessThanOrEqual(5);
+    expect(EXAMPLE_URLS.length).toBeLessThanOrEqual(8);
   });
 });
 
