@@ -118,9 +118,10 @@ export function isBlockedIPv6(ip: string): boolean {
   const allZero = g.every((x) => x === 0);
   if (allZero) return true; // ::
   if (g.slice(0, 7).every((x) => x === 0) && g[7] === 1) return true; // ::1
-  // IPv4-mapped ::ffff:a.b.c.d and IPv4-compatible ::a.b.c.d and NAT64 64:ff9b::/96 → check embedded v4
+  // IPv4-mapped ::ffff:a.b.c.d, IPv4-compatible ::a.b.c.d, IPv4-translated ::ffff:0:a.b.c.d (RFC 2765) and NAT64 64:ff9b::/96 → check embedded v4
   const embedsV4 =
     (g.slice(0, 5).every((x) => x === 0) && (g[5] === 0xffff || g[5] === 0)) ||
+    (g.slice(0, 4).every((x) => x === 0) && g[4] === 0xffff && g[5] === 0) ||
     (g[0] === 0x64 && g[1] === 0xff9b && g.slice(2, 6).every((x) => x === 0));
   if (embedsV4) {
     const v4 = `${g[6] >> 8}.${g[6] & 0xff}.${g[7] >> 8}.${g[7] & 0xff}`;
@@ -131,6 +132,7 @@ export function isBlockedIPv6(ip: string): boolean {
   if ((g[0] & 0xffc0) === 0xfec0) return true; // fec0::/10 site-local (deprecated)
   if ((g[0] & 0xff00) === 0xff00) return true; // ff00::/8 multicast
   if (g[0] === 0x2001 && g[1] === 0x0db8) return true; // 2001:db8::/32 documentation
+  if (g[0] === 0x2001 && g[1] === 0) return true; // 2001::/32 Teredo (tunnels an obfuscated v4 host address)
   if (g[0] === 0x2002) {
     // 6to4: embedded v4 in groups 1-2
     const v4 = `${g[1] >> 8}.${g[1] & 0xff}.${g[2] >> 8}.${g[2] & 0xff}`;

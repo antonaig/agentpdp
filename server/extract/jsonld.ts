@@ -4,7 +4,10 @@
  * additionalProperty specs, aggregateRating, and lightly broken JSON (trailing commas, HTML comments).
  */
 import type { ParsedProduct, ParsedVariant } from "./types.js";
-import { availabilityFromSchema, canonicalFromDoc, htmlToText, normalizeCurrency, parseDoc, parsePrice, absUrl, type Doc, type El } from "./html.js";
+import { availabilityFromSchema, canonicalFromDoc, htmlToText, normalizeCurrency, parseDoc, parsePrice, absUrl, stripHtmlComments, type Doc, type El } from "./html.js";
+
+/** Script bodies past this are not product data; refusing them keeps the lenient passes linear in practice. */
+export const MAX_JSONLD_CHARS = 1_000_000;
 
 type Json = Record<string, unknown>;
 
@@ -33,9 +36,10 @@ export function extractJsonLdBlocks(html: string, doc?: Doc): unknown[] {
 }
 
 export function lenientJsonParse(text: string): unknown {
+  if (text.length > MAX_JSONLD_CHARS) return undefined;
   let t = text.trim();
   // CDATA wrappers and HTML comments occasionally appear inside the script body.
-  t = t.replace(/<!--[\s\S]*?-->/g, "").replace(/^\/\/\s*<!\[CDATA\[/, "").replace(/\/\/\s*\]\]>$/, "").replace(/^<!\[CDATA\[/, "").replace(/\]\]>$/, "").trim();
+  t = stripHtmlComments(t).replace(/^\/\/\s*<!\[CDATA\[/, "").replace(/\/\/\s*\]\]>$/, "").replace(/^<!\[CDATA\[/, "").replace(/\]\]>$/, "").trim();
   const CONTROL = /[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g;
   const attempts = [
     t,

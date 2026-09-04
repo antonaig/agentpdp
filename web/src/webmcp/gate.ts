@@ -138,6 +138,10 @@ export function guard(tool: ToolName, handler: ToolHandler): GuardedHandler {
       let approved = false;
       try { approved = await askHuman(tool, args, summary); } catch { approved = false; }
       if (!approved) return finish("denied", { ok: false, code: "denied", error: "The shopper declined this action." });
+      // The merchant may have switched the tool off while the dialog was open; the approval does not outrank that.
+      if (useStore.getState().policy.tools[tool] === "off") {
+        return finish("blocked", { ok: false, code: "blocked", error: `The merchant has turned ${tool} off on this page.` });
+      }
       confirmed = true;
     }
 

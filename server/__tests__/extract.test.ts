@@ -5,7 +5,8 @@ import { clearExtractCache, extractProduct } from "../extract/index.js";
 import { detectBotChallenge } from "../extract/fetch.js";
 import { shopifyTargetFromUrl } from "../extract/shopify.js";
 import { mineSpecs, normalizeUrl } from "../extract/normalize.js";
-import { lenientJsonParse } from "../extract/jsonld.js";
+import { lenientJsonParse, MAX_JSONLD_CHARS } from "../extract/jsonld.js";
+import { decodeEntities, htmlToText, stripHtmlComments, stripRawTextElements } from "../extract/html.js";
 
 const fixture = (name: string) => readFileSync(fileURLToPath(new URL(`../fixtures/${name}`, import.meta.url)), "utf8");
 const SHOPIFY_JS = fixture("shopify-product.js.json");
@@ -168,6 +169,85 @@ describe("rung: jsonld", () => {
   it("lenient parser handles trailing commas and comments", () => {
     expect(lenientJsonParse('<!-- x -->{"a":[1,2,],}')).toEqual({ a: [1, 2] });
     expect(lenientJsonParse("garbage")).toBeUndefined();
+  });
+
+  it("lenient parser refuses oversized script bodies", () => {
+    expect(lenientJsonParse('{"a":1}'.padEnd(MAX_JSONLD_CHARS + 1, " "))).toBeUndefined();
+    expect(lenientJsonParse('{"a":1}'.padEnd(MAX_JSONLD_CHARS, " "))).toEqual({ a: 1 });
+  });
+});
+
+describe("html helpers stay linear on hostile input", () => {
+  it("htmlToText on 60K unterminated <script openers completes fast", () => {
+    const t0 = performance.now();
+    const out = htmlToText("<script".repeat(60_000));
+    expect(performance.now() - t0).toBeLessThan(300);
+    expect(typeof out).toBe("string");
+  });
+
+  it("htmlToText on many terminated script blocks and other openers completes fast", () => {
+    const t0 = performance.now();
+    htmlToText("<script>x</script><p>a</p>".repeat(6_000));
+    htmlToText("<li".repeat(60_000));
+    htmlToText("<div".repeat(60_000));
+    htmlToText("<".repeat(60_000));
+    expect(performance.now() - t0).toBeLessThan(300);
+  });
+
+  it("lenientJsonParse on 60K unterminated comment openers completes fast", () => {
+    const t0 = performance.now();
+    expect(lenientJsonParse("<!--".repeat(60_000))).toBeUndefined();
+    expect(performance.now() - t0).toBeLessThan(300);
+  });
+
+  it("stripRawTextElements drops script/style/noscript/template bodies, case-insensitively, and keeps unterminated openers", () => {
+    expect(stripRawTextElements("a<script>var x = '<p>';</script>b<STYLE>p{}</Style>c<noscript><img></noscript>d<template><li>t</li></template>e")).toBe("a b c d e");
+    expect(stripRawTextElements("a<script>never closed<p>text")).toBe("a<script>never closed<p>text");
+    expect(stripRawTextElements("<script>x<style>y</style>z")).toBe("<script>x z");
+    expect(stripRawTextElements("<p>no raw text</p>")).toBe("<p>no raw text</p>");
+    expect(stripRawTextElements("x<script src=a></script>y", "")).toBe("xy");
+  });
+
+  it("stripHtmlComments drops comments and keeps an unterminated one", () => {
+    expect(stripHtmlComments("a<!-- one -->b<!---->c")).toBe("abc");
+    expect(stripHtmlComments("a<!-- open b", "")).toBe("a<!-- open b");
+    expect(stripHtmlComments("<!--x-->{}", " ")).toBe(" {}");
+    expect(stripHtmlComments("plain")).toBe("plain");
+  });
+
+  it("htmlToText matches the legacy regex implementation on real fixtures and edge cases", () => {
+    // The regex passes this replaced, kept here as the oracle (safe on small inputs).
+    const legacy = (html: string, cap = 4000): string => {
+      let t = html;
+      if (!/<[a-z!/]/i.test(t)) return legacyCollapse(decodeEntities(t), cap);
+      t = t.replace(/<(script|style|noscript|template)[\s\S]*?<\/\1>/gi, " ");
+      t = t.replace(/<!--[\s\S]*?-->/g, " ");
+      t = t.replace(/<br\s*\/?>/gi, "\n");
+      t = t.replace(/<li[^>]*>/gi, "\n- ");
+      t = t.replace(/<\/(p|div|li|ul|ol|h[1-6]|tr|table|section|article|blockquote|dd|dt)>/gi, "\n");
+      t = t.replace(/<(p|div|h[1-6]|tr|section|article|blockquote)[^>]*>/gi, "\n");
+      t = t.replace(/<\/t[dh]>/gi, " \t");
+      t = t.replace(/<[^>]+>/g, " ");
+      return legacyCollapse(decodeEntities(t), cap);
+    };
+    const legacyCollapse = (t: string, cap: number): string => {
+      const out = t.replace(/\u00a0/g, " ").replace(/[ \t]+/g, " ").replace(/ *\n */g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+      return out.length > cap ? out.slice(0, cap - 1).trimEnd() + "…" : out;
+    };
+    const cases = [
+      SKIMS, SIMPLE_JSONLD, OG_ONLY, AKAMAI,
+      "<div><h1>Title</h1><!-- hidden --><script>track()</script><p>Line one<br>Line two</p><ul><li>a</li><li>b</li></ul>&amp; done</div>",
+      "<table><tr><td>Size</td><th>Queen</th></tr></table><pre>kept</pre><link rel=x><track><BR/><br class=x>",
+      "Just text &amp; entities", "a <b>bold</b> < c > d <> e", "<p>unterminated <b", "<STYLE>p{}</style>X<NoScript>y</noscript>Z",
+      "<script>a</script><script>never closed", "<!-- open <p>still text", "<li>one<li>two</li></ol></dd></dt></blockquote></section>",
+      // nested "<" inside a tag region and pass-order effects
+      "<x <p>after", "<div <p>after", "<a <a <a <p>after", "<li<li<li>after", "<b>x</b> <li<i>y</i>", "<p>a<>b<c",
+      // raw-text openers with and without closers, non-exact closers, mixed tags
+      "<script>x<style>y</style>z", "<script>x</script >y</script>z", "<scripts>x</script>y", "<style>a<script>b</style>c</script>d",
+      "<template><script>inner</script></template>tail", "<noscript>a</NOSCRIPT><SCRIPT>b</script>c",
+    ];
+    for (const html of cases) expect(htmlToText(html), html.slice(0, 60)).toBe(legacy(html));
+    expect(htmlToText("x".repeat(100_000), 50).length).toBe(50);
   });
 });
 

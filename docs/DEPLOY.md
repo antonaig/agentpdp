@@ -68,7 +68,7 @@ Written once from `infra/env.template` by `server-setup.sh`; never overwritten. 
 
 Service: runs as the dedicated system user `agentpdp` (nologin), `Restart=always`, `RestartSec=2`, `LimitNOFILE=65536`, journald logging, hardened (`NoNewPrivileges`, `PrivateTmp`, `ProtectSystem=strict` with `ReadWritePaths=/opt/agentpdp`, kernel/cgroup/hostname protections). Deliberately not set: `MemoryDenyWriteExecute` (kills the V8 JIT) and `RestrictNamespaces` (headless Chromium). Playwright launches Chromium with `--no-sandbox` by default, so `NoNewPrivileges` is safe.
 
-Caddy: `encode zstd gzip`, HSTS, `nosniff`, `Referrer-Policy`, `Permissions-Policy`, `Server` header stripped. No `X-Frame-Options`/CSP on purpose — the product page may need to be embedded and the SPA ships inline assets; add later if wanted.
+Caddy: `encode zstd gzip`, HSTS, `nosniff`, `X-Frame-Options: DENY` (the demo is not meant to be framed; relax to `SAMEORIGIN` if a merchant embed is ever wanted), `Referrer-Policy`, `Permissions-Policy`, `Server` header stripped. No CSP yet — the SPA ships inline assets; add later if wanted.
 
 ## Playwright version pin
 

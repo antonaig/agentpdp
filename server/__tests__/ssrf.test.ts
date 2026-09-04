@@ -69,7 +69,7 @@ describe("validateTargetUrl", () => {
   });
 
   it("rejects IPv6 literals in private / special ranges", async () => {
-    const blocked = ["::1", "::", "fc00::1", "fd12:3456::1", "fe80::1", "ff02::1", "::ffff:127.0.0.1", "::ffff:7f00:1", "::ffff:10.0.0.1", "::ffff:a9fe:a9fe", "64:ff9b::7f00:1", "::127.0.0.1", "2001:db8::1", "2002:7f00:1::1"];
+    const blocked = ["::1", "::", "2001::1", "::ffff:0:127.0.0.1", "fc00::1", "fd12:3456::1", "fe80::1", "ff02::1", "::ffff:127.0.0.1", "::ffff:7f00:1", "::ffff:10.0.0.1", "::ffff:a9fe:a9fe", "64:ff9b::7f00:1", "::127.0.0.1", "2001:db8::1", "2002:7f00:1::1"];
     for (const ip of blocked) expect(await code(validateTargetUrl(`https://[${ip}]/`, publicLookup)), ip).toBe("ssrf_blocked");
     expect(["ssrf_blocked", "invalid_url"]).toContain(await code(validateTargetUrl("https://[fe80::1%25en0]/", publicLookup))); // zone ids are refused either way
     expect(await code(validateTargetUrl("https://[2606:4700::1111]/", publicLookup))).toBe("ok");
@@ -101,6 +101,20 @@ describe("ip classifiers", () => {
     expect(isBlockedIPv6("fbff::1")).toBe(false);
     expect(isBlockedIPv6("fc00::")).toBe(true);
     expect(isBlockedIPv6("garbage")).toBe(true);
+  });
+
+  it("blocks Teredo 2001::/32 but not its neighbours", () => {
+    expect(isBlockedIPv6("2001::1")).toBe(true);
+    expect(isBlockedIPv6("2001:0:4136:e378:8000:63bf:3fff:fdd2")).toBe(true);
+    expect(isBlockedIPv6("2001:1::1")).toBe(false);
+    expect(isBlockedIPv6("2001:4860:4860::8888")).toBe(false);
+  });
+
+  it("blocks IPv4-translated ::ffff:0:a.b.c.d by the embedded v4", () => {
+    expect(isBlockedIPv6("::ffff:0:127.0.0.1")).toBe(true);
+    expect(isBlockedIPv6("::ffff:0:7f00:1")).toBe(true);
+    expect(isBlockedIPv6("::ffff:0:a9fe:a9fe")).toBe(true);
+    expect(isBlockedIPv6("::ffff:0:93.184.216.34")).toBe(false);
   });
 });
 

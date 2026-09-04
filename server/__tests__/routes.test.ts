@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from "vitest";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { app } from "../app.js";
+import { app, ASK_BODY_LIMIT_BYTES, RATE_LIMIT_EXTRACT, resetRateLimits } from "../app.js";
 import { clearExtractCache, configureExtractor } from "../extract/index.js";
 
 const fixture = (name: string) => readFileSync(fileURLToPath(new URL(`../fixtures/${name}`, import.meta.url)), "utf8");
@@ -24,7 +24,10 @@ const fetchImpl = (async (input: string | URL | Request) => {
 
 beforeAll(() => configureExtractor({ fetchImpl, lookup: async () => ["93.184.216.34"], headless: false }));
 afterAll(() => configureExtractor({}));
-beforeEach(() => clearExtractCache());
+beforeEach(() => {
+  clearExtractCache();
+  resetRateLimits();
+});
 
 describe("GET /api/extract", () => {
   it("400 without url", async () => {
@@ -108,5 +111,31 @@ describe("GET /api/extract/debug", () => {
     const res = await app.request("/api/extract/debug");
     expect(res.status).toBe(400);
     expect((await res.json()).rungs).toEqual([]);
+  });
+});
+
+describe("abuse limits", () => {
+  it("61st /api/extract request within a minute from one x-real-ip is 429; other addresses are unaffected", async () => {
+    const from = (ip: string, path = "/api/extract") => app.request(path, { headers: { "x-real-ip": ip } });
+    for (let i = 0; i < RATE_LIMIT_EXTRACT; i++) {
+      const res = await from("203.0.113.9");
+      expect(res.status, `request ${i + 1}`).toBe(400); // no ?url=, but counted
+    }
+    const limited = await from("203.0.113.9");
+    expect(limited.status).toBe(429);
+    expect(await limited.json()).toEqual({ ok: false, code: "rate_limited", error: "Too many requests; try again in a minute." });
+    // the debug endpoint shares the same bucket
+    expect((await from("203.0.113.9", "/api/extract/debug")).status).toBe(429);
+    expect((await from("203.0.113.10")).status).toBe(400);
+    expect((await app.request("/api/extract")).status).toBe(400);
+  });
+
+  it("ask body over the limit is 413 before the route runs", async () => {
+    const big = JSON.stringify({ question: "q", product: { title: "x".repeat(ASK_BODY_LIMIT_BYTES + 1024) } });
+    const res = await app.request("/api/ask", { method: "POST", headers: { "content-type": "application/json" }, body: big });
+    expect(res.status).toBe(413);
+    expect(await res.json()).toMatchObject({ ok: false, code: "payload_too_large" });
+    const declared = await app.request("/api/ask", { method: "POST", headers: { "content-type": "application/json", "content-length": String(ASK_BODY_LIMIT_BYTES + 1) }, body: "{}" });
+    expect(declared.status).toBe(413);
   });
 });

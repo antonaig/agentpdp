@@ -77,6 +77,8 @@ describe("registerPageTools", () => {
     const add = ctx.tools.get("add_to_cart")!;
     expect(add.annotations?.consequentialHint).toBe(true);
     expect(ctx.tools.get("get_product")!.annotations?.readOnlyHint).toBe(true);
+    // every tool that echoes page text is flagged untrusted; the session-state tool is the only one that is not
+    for (const name of TOOL_NAMES) expect(ctx.tools.get(name)!.annotations?.untrustedContentHint, name).toBe(name === "get_session_state" ? undefined : true);
     expect(add.description).toContain("Meridian Linen Duvet Cover");
   });
 
@@ -155,6 +157,18 @@ describe("gate", () => {
     expect(useStore.getState().ledger[0].outcome).toBe("confirmed");
     expect(useStore.getState().pendingConfirm).toBeNull();
     expect(useStore.getState().session.humanActions).toBe(0);
+  });
+
+  it("confirm flow: a tool switched off while the dialog is open is blocked even if the human approves", async () => {
+    const pending = guardedHandler("add_to_cart")({ variant_id: "41000000003" });
+    await tick();
+    expect(useStore.getState().pendingConfirm).not.toBeNull();
+    useStore.getState().setToolPolicy("add_to_cart", "off");
+    useStore.getState().resolveConfirm(true);
+    const res = (await pending) as any;
+    expect(res).toMatchObject({ ok: false, code: "blocked" });
+    expect(useStore.getState().ledger[0].outcome).toBe("blocked");
+    expect(useStore.getState().session.cart).toEqual([]);
   });
 
   it("confirm flow: decline gives denied and leaves the cart alone", async () => {

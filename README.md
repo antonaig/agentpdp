@@ -71,6 +71,7 @@ End to end: 109 unit tests; 7 native WebMCP tests in Chrome 152 with the runtime
 - Works on pages that publish product data (Shopify feed, schema.org, OpenGraph) or render it in the browser. Sites that block automated fetches at the transport level (Akamai on Lululemon) refuse; the page reports which step failed.
 - Live availability only where the store exposes it (Shopify). Elsewhere the tool says "unknown" and why.
 - Merchant policies are enforced in the page, which is where WebMCP executes; they are stored per browser for this demo.
+- The API is same-origin by default: CORS allows only `PUBLIC_ORIGIN` (falling back to `*` when it is unset, as in local dev), and `/api/extract` and `/api/ask` are rate-limited per IP.
 - Tested in Chrome 152 with the WebMCP runtime flags (`--enable-blink-features=WebMCP,WebMCPTesting`). Chrome 152 echoes only `readOnlyHint`/`untrustedContentHint` from `getTools()`; `consequentialHint` is passed at registration. Site tools in ChatGPT require the desktop app's built-in browser (Cmd+Shift+B) and a supported model.
 
 ## Prior work vs. new work
